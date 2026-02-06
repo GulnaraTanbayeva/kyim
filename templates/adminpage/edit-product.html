@@ -1,0 +1,238 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<html data-theme="light"> 
+<head>
+	<title>kyim. - Admin Dashboard</title>
+	<link rel="stylesheet" href="{% static 'assets/css/adminpage.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<style>
+
+.function {
+    width: 95%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+.styled-form {
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+	width: 60%;
+}
+
+.image-wrapper {
+    width: 40%;
+    float: left;
+    padding-left: 20px; 
+	margin-left: 50px;
+}
+.product-image1 {
+    max-height: 200px; /* Adjust the maximum height as needed */
+    width: auto; /* Maintain aspect ratio */
+    display: block;
+    margin-bottom: 10px; /* Add some margin between images */
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.styled-form input[type="text"],
+.styled-form textarea,
+.styled-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.error-box {
+    font-size: 1.5em;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-submit {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-submit:hover {
+    background-color: #0056b3;
+}
+
+</style>
+
+<body>
+<div class="page-wrapper">
+	<aside class="side-bar">
+		<ul class="navbar-links navbar-links-1">
+			<li>
+				<a href="{% url 'adminpage:dashboard' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-house"></i>
+					</span>
+					<span class="nav-text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'adminpage:products' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-bookmark"></i>
+					</span>
+					<span class="nav-text">Products</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="{% url 'adminpage:add-product' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-plus"></i>
+					</span>
+					<span class="nav-text">Add Product</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'userauths:sign-in' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-right-from-bracket"></i>
+					</span>
+					<span class="nav-text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</aside>
+<div class="contents">
+	<div class="panel-bar" style="margin-bottom: 20px;">
+		<div class="row-1">
+			<h1>Update Product</h1>
+		</div>
+	</div>
+
+	<div class="function" style="display: flex;">
+		{% if form.errors %}
+			{% for field in form %}
+				{% for error in field.errors %}
+					<div class="error-box" style="font-size: 1.5em; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 10px; margin-bottom: 10px;">
+						{{ error }}
+					</div>
+				{% endfor %}
+			{% endfor %}
+		{% endif %}   
+		<form method="post" enctype="multipart/form-data" class="styled-form">
+			{% csrf_token %}
+				<div class="form-group">
+					<label for="title">Title:</label>
+					{{ product_form.title }}
+				</div>
+				<div class="form-group">
+					<label for="color">Color:</label>
+					{{ product_form.color }}
+				</div>
+				<div class="form-group">
+					<label for="description">Description:</label>
+					{{ product_form.description }}
+				</div>
+				<div class="form-group">
+					<label for="image">Image:</label>
+					{{ product_form.image }}
+				</div>
+				<div class="form-group">
+					<label for="price">Price:</label>
+					{{ product_form.price }}
+				</div>
+				<div class="form-group">
+					<label for="old_price">Old_price:</label>
+					{{ product_form.old_price }}
+				</div>
+				<div class="form-group">
+					<label for="gender">Gender:</label>
+					{{ product_form.gender }}
+				</div>
+				<div class="form-group">
+					<label for="specifications">Specifications:</label>
+					{{ product_form.specifications }}
+				</div>
+				<div class="form-group">
+					<label for="tags">Tags:</label>
+					{{ product_form.tags }}
+				</div>
+				<div class="form-group">
+					<label for="product_status">Product_status:</label>
+					{{ product_form.product_status }}
+				</div>
+				<div class="form-group">
+					<label for="status">Status:</label>
+					{{ product_form.status }}
+				</div>
+				<div class="form-group">
+					<label for="in_stock">In_stock:</label>
+					{{ product_form.in_stock }}
+				</div>
+				<div class="form-group">
+					<label for="featured">Featured:</label>
+					{{ product_form.featured }}
+				</div>
+				<div class="form-group">
+					<label for="digital">Digital:</label>
+					{{ product_form.digital }}
+				</div>
+				<div class="form-group">
+					<label for="sku">Sku:</label>
+					{{ product_form.sku }}
+				</div>
+				<div class="form-group">
+					<label for="category">Category:</label>
+					{{ product_form.category }}
+				</div>
+				<div class="form-group">
+					<label for="vendor">Vendor:</label>
+					{{ product_form.vendor }}
+				</div>
+				
+				<h2 style="margin-bottom: 7px;">Product Images</h2>
+                <div class="form-group">
+					{{ formset.management_form }}
+					{% for form in formset %}
+					<div class="div" style="display: flex; margin-bottom: 5px; justify-content: space-between;">
+						{{ form.as_p }}
+					</div>
+					{% endfor %}
+				</div>
+		
+				<button type="submit" class="btn-submit">Save</button>
+		</form>
+		<div class="image-wrapper">
+			<h2 style="margin-bottom: 20px;">Product Image</h2>
+			<img src="{{ product.image.url }}" alt="Product Image" class="product-image1">
+			{% for p in p_image %}
+				<img src="{{ p.images.url }}" alt="Product Image" class="product-image1">
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+</body>
+</html>
+
+{% endblock %}

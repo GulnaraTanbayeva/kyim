@@ -1,0 +1,166 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!DOCTYPE html> 
+<html data-theme="light">
+<head> 
+  <title>kyim. - dashboard</title>
+ 
+  <link rel="stylesheet" href="{% static 'assets/css/dashboard.css' %}"> 
+</head>
+
+<main class="navbabba"> 
+    <section class="basa">
+        <div class="sidebar">
+          <div class="navbar-dashboard">
+            <ul>
+              <li><a href="#" class="navvv-item">PROFILE</a></li>
+              <!-- Hidden Order Link -->
+              <li><a href="#" class="navvv-item">MY ORDERS</a></li>
+              <li><a href="#" class="navvv-item">ADDRESS</a></li>
+              <li><a href="#" class="navvv-item">MY PRODUCTS</a></li>
+              <li><a href="#">
+                <div class="divvvv">
+                  <span class="navvv-item">SETTINGS</span>
+                </div>
+              </a>
+              </li>
+              <li><a href="{% url 'core:contact' %}">
+                <div class="divvvv">
+                  <span class="navvv-item">CONTACT US</span>
+                </div>
+              </a>
+              </li>
+              <li><a href="{% url 'userauths:sign-in' %}">
+                <div class="divvvv">
+                  <span class="navvv-item">LOGOUT</span>
+                </div>
+              </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="fourth">
+          <div class="container" id="dash-section">
+            <h1>Welcome {{ request.user.username|title }}!</h1>
+          </div>
+          <div class="container">
+          </div>
+          <!-- Order Page -->
+          <div class="container main-body" id="order-section">
+            <div class="chart">
+                <div class="chart-header">
+                    <h2>Orders</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table class="styled-table" style="text-align: center;">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Date</th>
+                                <th>Total</th>
+                                <th>Product Status</th>
+                                <th>View</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in orders %}
+                            <tr>
+                                <td>{{ t.id }}</td>
+                                <td>{{ t.order_date|date:"d.m.Y" }}</td>
+                                <td>${{ t.price }}</td>
+                                <td>{{ t.product_status|title }}</td>
+                                <td><a href="{% url 'adminpage:order-detail' t.oid %}" class="view-button">View</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        
+          <div class="top-products">
+            <header class="products-header">
+              <h1>My Products</h1>
+            </header>
+            <div class="products-wrapper" style="width: 100%;">
+              {% for o in mylist %}
+              <div class="product" style="margin-left: 30px;">
+                <div class="product-img">
+                  <img src="{{o.product.image.url}}" class="imgpic">
+                </div>
+                <div class="product-desc">
+                  <div class="product-row-1">
+                    <h2>{{o.product.title}}</h2>
+                  </div>
+                </div>
+                <div class="product-desc">
+                  <div class="product-row-1">
+                    <p><a href="{% url 'core:product-detail' o.product.pid %}">GO</a></p>
+                  </div>	
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+      </div>
+      <div class="fifth"> 
+          <div class="container" id="profile-section">
+            <h1>My Profile</h1> 
+            <div>
+              {% if profile.image %}
+                  <span><img src="{{ profile.image.url }}" alt="My Image" class="imgpic"></span>
+              {% else %}
+                  <span><img src="{% static 'assets/images/logo/default_profile_image.webp' %}" alt="Default Image" class="imgpic"></span>
+              {% endif %}
+            </div>
+            <div class="klfalkf">
+              <span>Name: {{profile.full_name}}</span>
+              <span>Phone: {{profile.phone}}</span>
+              <div class="button">
+                <a href = "{% url 'userauths:profile-edit' %}" class="edit">Edit Profile</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="container" id="address-section">
+            <div id = "adddress">
+              <form method = "POST"> 
+                {% csrf_token %}
+                <h1>Add address</h1>
+                <div>
+                  <input id="addresss" placeholder="Address" name = "address" type = "text"/>
+                  <input id="addresss" placeholder="Phone" name = "mobile"/>
+                </div>
+                <button id="address" type = "submit" class = "btn-fill-out submit" name = "submit" value = "Submit">Add address</button>
+              </form>
+            </div>
+            {% for a in address%}
+              <div id="div-with-address">
+                <h1 class="h1j11">Shipping address</h1>
+                <address>
+                  <p>{{a.address}}</p>
+                  <p>{{a.mobile}}</p>
+                  
+                </address>
+                  {% if a.status %}
+                  <i data-address-id = "{{ a.id }}" class = "fa fa-check-circle text-success check{{ a.id }}"></i>
+                  <button data-address-id = "{{ a.id }}" class = "default-address button{{ a.id }} action_btn" style = "display:none;">Make default</button>
+                  {% else %}
+                  <i data-address-id = "{{ a.id }}" class = "fa fa-check-circle text-success check{{ a.id }}"></i>
+                  <button data-address-id = "{{ a.id }}" class = "default-address button{{ a.id }} action_btn">Make default</button>
+      
+                  {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+      </div>   
+  </section>    
+</main>
+  {% endblock content %}
+</body>
+<script src="{% static 'assets/js/base.js' %}"></script>
+
+</html>

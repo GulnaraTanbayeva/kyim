@@ -1,0 +1,202 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<html data-theme="light"> 
+<head>
+	<title>kyim. - Admin Dashboard</title>
+	<link rel="stylesheet" href="{% static 'assets/css/adminpage.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<div class="page-wrapper">
+	<aside class="side-bar">
+		<ul class="navbar-links navbar-links-1">
+			<li class="active">
+				<a href="{% url 'adminpage:dashboard' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-house"></i>
+					</span>
+					<span class="nav-text">Dashboard</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'adminpage:products' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-bookmark"></i>
+					</span>
+					<span class="nav-text">Products</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'adminpage:add-product' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-plus"></i>
+					</span>
+					<span class="nav-text">Add Product</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'userauths:sign-in' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-right-from-bracket"></i>
+					</span>
+					<span class="nav-text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</aside>
+	<div class="contents">
+		<div class="description">
+			<div class="col-1">
+				<div class="boxes-row">
+					<div class="balance-box">
+						<div class="subject-row">
+							<div class="text">
+								<h3>Revenue</h3>
+								<h1>${{revenue.price}}</h1>
+							</div>
+						</div>
+					</div>
+
+					<div class="balance-box">
+						<div class="subject-row">
+							<div class="text">
+								<h3>Monthly Earning</h3>
+								<h1>${{monthly_income.price}}</h1>
+							</div>
+						</div>
+					</div>
+
+					<div class="balance-box">
+						<div class="subject-row">
+							<div class="text">
+								<h3>Orders</h3>
+								<h1>{{total_order.count}}</h1>
+							</div>
+						</div>
+					</div>
+
+					<div class="balance-box">
+						<div class="subject-row">
+							<div class="text">
+								<h3>Products</h3>
+								<h1>{{all_products.count}}</h1>
+							</div>
+						</div>
+					</div>
+
+					<div class="balance-box">
+						<div class="subject-row">
+							<div class="text">
+								<h3>OutDated MyList Entries</h3>
+								<h1>{{old_entries_count}}</h1>
+								<form action="{% url 'adminpage:delete-old-mylist' %}" method="post" style="margin-bottom: 20px;">
+									{% csrf_token %}
+									<input type="submit" class="view-button" value="Delete Outdated List" />
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="chart">
+					<div class="chart-header">
+						<h2>Orders</h2>
+					</div>
+					<div class="table-wrapper">
+						<table>
+						<thead>
+							<tr>
+							<th>Order</th>
+							<th>Name</th>
+							<th>Email</th>
+							<th>Phone</th>
+							<th>Date</th>
+							<th>Total</th>
+							<th>Product Status</th>
+							<th>Payment Status</th>
+							<th>View</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for t in total_order %}
+							<tr>
+							<td>{{ t.id }}</td>
+							<td>{{ t.full_name }}</td>
+							<td>{{ t.email }}</td>
+							<td>{{ t.phone }}</td>
+							<td>{{ t.order_date|date:"d.m.Y" }}</td>
+							<td>${{ t.price }}</td>
+							<td>{{ t.product_status|title }}</td>
+							<td>{% if t.paid_status == True %}<b style="color: #058101;">Paid</b>{% else %}<b style="color: #c22307;">Not Paid</b>{% endif %}</td>
+							<td><a href="{% url 'adminpage:order-detail' t.oid %}" class="view-button">View</a></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="col-2">
+				<div class="top-products">
+					<header class="products-header">
+						<h1>Top Products</h1>
+					</header>
+					<div class="products-wrapper">
+						{% for o in best_sold_products %}
+						<div class="product">
+							<div class="product-img">
+								<img src="{{o.image}}" class="imgpic">
+							</div>
+							<div class="product-desc">
+								<div class="product-row-1">
+									<h2>{{o.item}}</h2>
+								</div>
+							</div>
+							<div class="product-desc">
+								<div class="product-row-1">
+									<p>{{o.total_sales}}</p>
+								</div>	
+							</div>
+							<div class="product-desc">
+								<div class="product-row-1">
+									<p>{{o.size}}</p>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="top-products">
+					<header class="products-header">
+						<h1>Top Vendors</h1>
+					</header>
+					<div class="products-wrapper">
+						{% for v in vendor_sales %}
+						<div class="product">
+							<div class="product-img">
+								<img src="{{v.image.url}}" class="imgpic">
+							</div>
+							<div class="product-desc">
+								<div class="product-row-1">
+									<h2>{{v.title}}</h2>
+								</div>
+							</div>
+							<div class="product-desc">
+								<div class="product-row-1">
+									<p>${{v.total_income}}</p>
+								</div>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+
+{% endblock content %}

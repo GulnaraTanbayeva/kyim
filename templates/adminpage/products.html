@@ -1,0 +1,102 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<html data-theme="light"> 
+<head>
+	<title>kyim. - Admin Dashboard</title>
+	<link rel="stylesheet" href="{% static 'assets/css/adminpage.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<script>
+	document.addEventListener("DOMContentLoaded", function() {
+		var checkboxes = document.querySelectorAll('.product-checkbox');
+		checkboxes.forEach(function(checkbox) {
+			checkbox.addEventListener('change', function() {
+				var productItem = this.closest('.product-item');
+				if (this.checked) {
+					productItem.classList.add('selected');
+				} else {
+					productItem.classList.remove('selected');
+				}
+			});
+		});
+	});
+</script>
+<body>
+<!--   *** Page Wrapper Starts ***   -->
+<div class="page-wrapper">
+	
+	<aside class="side-bar">
+		<ul class="navbar-links navbar-links-1">
+			<li>
+				<a href="{% url 'adminpage:dashboard' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-house"></i>
+					</span>
+					<span class="nav-text">Dashboard</span>
+				</a>
+			</li>
+			<li class="active">
+				<a href="{% url 'adminpage:products' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-bookmark"></i>
+					</span>
+					<span class="nav-text">Products</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'adminpage:add-product' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-plus"></i>
+					</span>
+					<span class="nav-text">Add Product</span>
+				</a>
+			</li>
+			<li>
+				<a href="{% url 'userauths:sign-in' %}">
+					<span class="nav-icon">
+						<i class="fa-solid fa-right-from-bracket"></i>
+					</span>
+					<span class="nav-text">Logout</span>
+				</a>
+			</li>
+		</ul>
+	</aside>
+	<div class="contents">
+		<div class="description2">
+			<div class="product-heading">
+                <h1>Product List</h1>
+                <a href="{% url 'adminpage:add-product' %}" class="create-product-button">Create Product</a>
+            </div>
+			<div class="product-grid">
+				{% for p in all_products %}
+				<div class="product-item">
+					<input type="checkbox" name="product" class="product-checkbox">
+					<img src="{{p.image.url}}" alt="Product Image" width="20%" height="20%" class="product-image">
+					<div class="product-details">
+						<p class="product">{{p.title}}</p>
+						<p class="product">${{p.price}}</p>
+						<p class="product">{{p.date|date:"d.m.Y" }}</p>
+						{% if p.in_stock %}
+						<p class="product">In stock</p>
+						{% else %}
+						<p class="product">Out Of Stock</p>
+						{% endif %}
+					</div>
+					<div class="product-actions">
+						<button class="product"><a href="{% url 'adminpage:edit-product' p.pid %}">Edit</a></button>
+						<button class="product"><a href="{% url 'adminpage:delete-product' p.pid %}">Delete</a></button>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+</body>
+</html>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends 'partials/base.html' %}
+{% load static %}
+{% block content %}
+<html data-theme="light"> 
+<head>
+	<title>kyim. - Admin Dashboard</title>
+	<link rel="stylesheet" href="{% static 'assets/css/adminpage.css' %}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<!--   *** Page Wrapper Starts ***   -->
+<div class="page-wrapper">
+
+	<!--   === Side Bar Starts ===   -->
+		<aside class="side-bar">
+			<!--   === Nav Bar Links Starts ===   -->
+			<ul class="navbar-links navbar-links-1">
+				<li class="active">
+					<a href="{% url 'adminpage:dashboard' %}">
+						<span class="nav-icon">
+							<i class="fa-solid fa-house"></i>
+						</span>
+						<span class="nav-text">Dashboard</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'adminpage:products' %}">
+						<span class="nav-icon">
+							<i class="fa-solid fa-bookmark"></i>
+						</span>
+						<span class="nav-text">Products</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'adminpage:add-product' %}">
+						<span class="nav-icon">
+							<i class="fa-solid fa-plus"></i>
+						</span>
+						<span class="nav-text">Add Product</span>
+					</a>
+				</li>
+				<li>
+					<a href="{% url 'userauths:sign-in' %}">
+						<span class="nav-icon">
+							<i class="fa-solid fa-right-from-bracket"></i>
+						</span>
+						<span class="nav-text">Logout</span>
+					</a>
+				</li>
+			</ul>
+		</aside>
+<div class="contents1">
+	<h1>Order Details</h1>
+	<div class="card-body">
+		<div class="order-details">
+			<h2>Details for Order ID: <span>#{{order.id}}</span></h2>
+		</div>
+		<div class="order-status">
+			<form method="POST" action="{% url 'adminpage:change_order_status' order.oid %}">
+				{% csrf_token %}
+				<select name="status" class="status-select">
+					<option value="processing">Change Order Status</option>
+					<option value="processing">Processing</option>
+					<option value="shipped">Shipped</option>
+					<option value="delivered">Delivered</option>
+				</select>
+				<button type="submit" class="save-button">Save</button>
+			</form>
+		</div>
+	</div>
+	
+    <div class="card-body">
+		<div class="col">
+			<h2>Customer</h2>
+			<p>
+				<span>Name:</span> {{order.full_name}} <br />
+				<span>Email:</span> {{order.email}} <br />
+				<span>Phone:</span> {{order.phone}} <br />
+			</p>
+		</div>
+		<div class="col">
+			<h2>Order Info</h2>
+			<p>
+				<span>Shipping:</span> {{order.delivery_method}} <br />
+				<span>Order Id:</span> {{order.oid}} <br />
+				<span>Order Status:</span> {{order.product_status|title}} <br />
+				<span>Payment Status:</span> 
+				{% if order.paid_status %}
+					Paid
+				{% else %}
+					Not Paid
+				{% endif %}
+			</p>
+		</div>
+		<div class="col">
+			<h2>Deliver To</h2>
+			<p>
+				<span>Address:</span> {{order.address}} <br />
+				<span>City:</span> {{order.city}} <br />
+				<span>Index:</span> {{order.index}} <br />
+				<span>Country:</span> {{order.country}} <br />
+			</p>
+		</div>
+	</div>
+	
+	<div class="description">
+		<div class="table-wrapper">
+			<table>
+				<thead>
+					<tr>
+						<th>Product</th>
+						<th>Title</th>
+						<th>Price</th>
+						<th>Quantity</th>
+						<th>Size</th>
+						<th>Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for o in order_items %}
+					<tr>
+						<td><img src="{{o.image}}" alt="{{o.item}}" width="70" height="70"></td>
+						<td>{{o.item}}</td>
+						<td>${{o.price}}</td>
+						<td>{{o.quantity}}</td>
+						<td>{{o.size}}</td>
+						<td>${{o.total}}</td>
+					</tr>        
+					{% endfor %}
+					<tr>
+						<td colspan="6">
+							<dl class="totals">
+								<div>
+									<dt>Tax:</dt>
+									<dd>$0.00</dd>
+								</div>
+								<div>
+									<dt>Delivery:</dt>
+									<dd>$0.00</dd>
+								</div>
+								<div>
+									<dt>Total:</dt>
+									<dd>${{order.price}}</dd>
+								</div>
+							</dl>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+</div>
+{% endblock content %}
+</body>
+</html>
+
+<style>
+.product{
+    margin-left: 25px;
+}
+.product-list {
+    list-style: none;
+    padding: 0;
+}
+.product-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+}
+.product-image {
+    max-width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+.product-details {
+    flex: 1;
+}
+.product-actions button {
+    margin-left: 10px;
+}
+</style>
+
+<script>
+    // Script File
+var hamburgerBtn = document.querySelector('.hamburger-btn');
+var sideBar = document.querySelector('.side-bar');
+
+hamburgerBtn.addEventListener('click', sidebarToggle);
+function sidebarToggle(){
+	sideBar.classList.toggle('active');
+}
+
+// Code For Light/Dark Mode Toggle
+var modeSwitcher = document.querySelector('.mode-switch i');
+var body = document.querySelector('body');
+modeSwitcher.addEventListener('click', modeSwitch);
+function modeSwitch(){
+	body.classList.toggle('active');
+}
+</script>
